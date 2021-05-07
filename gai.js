@@ -1,39 +1,53 @@
+const fs = require("fs");
+const request = require("request");
+module.exports.config = {
+	name: "boxinfo",
+	version: "1.0.0", 
+	hasPermssion: 0,
+	credits: "HungCatMoi",
+	description: "Xem thông tin box của bạn",
+	commandCategory: "Info", 
+	usages: "boxinfo", 
+	cooldowns: 0,
+	dependencies: [] 
+};
 
-<?php
-header('Content-Type: text/html; charset=utf-8');
-
-$url = file_get_contents('https://api.tumblr.com/v2/blog/gaixinhchonloc.com/posts/photo?api_key=6L7Cy5WSd2wRrretr6nzRy0ymhOmS0tr43PbEUJeQ649LRDBif');
-$json = json_decode($url, true);
-$json_posts = $json['response']['posts'];
-$data = array();
-foreach ($json_posts as $key => $value) {
-  $data[] = $value['photos'][0]['original_size']['url'];
-}
-function array_random($array, $amount = 1){
-   $keys = array_rand($array, $amount);
-
-   if ($amount == 1) {
-       return $array[$keys];
-   }
-
-   $results = [];
-   foreach ($keys as $key) {
-       $results[] = $array[$key];
-   }
-
-   return $results;
-}
-$link_img = array_random($data);
-$result = array(
-	'messages' => array(
-		'0' => array(
-			'attachment' => array(
-				'type' => 'image',
-				'payload' => array(
-					'url' => $link_img
-				)
-			)
-		),
-	)
-);
-echo json_encode($result, JSON_UNESCAPED_UNICODE);
+module.exports.run = async function({ api, event, args }) {
+	let threadInfo = await api.getThreadInfo(event.threadID);
+	var memLength = threadInfo.participantIDs.length;
+	let threadMem = threadInfo.participantIDs.length;
+	var nameMen = [];
+    var gendernam = [];
+    var gendernu = [];
+    var nope = [];
+     for (let z in threadInfo.userInfo) {
+     	var gioitinhone = threadInfo.userInfo[z].gender;
+     	var nName = threadInfo.userInfo[z].name;
+        if(gioitinhone == "MALE"){gendernam.push(z+gioitinhone)}
+        else if(gioitinhone == "FEMALE"){gendernu.push(gioitinhone)}
+            else{nope.push(nName)}
+    };
+	var nam = gendernam.length;
+    var nu = gendernu.length;
+	let qtv = threadInfo.adminIDs.length;
+	let sl = threadInfo.messageCount;
+	let u = threadInfo.nicknames;
+	let icon = threadInfo.emoji;
+	let threadName = threadInfo.threadName;
+	let id = threadInfo.threadID;
+	let sex = threadInfo.approvalMode;
+			var pd = sex == false ? 'tắt' : sex == true ? 'bật' : 'Kh';
+			var callback = () =>
+				api.sendMessage(
+					{
+						body: `⭐️Tên: ${threadName}\n👨‍💻 ID Box: ${id}\n👀 Phê duyệt: ${pd}\n🧠 Emoji: ${icon}\n👉 Thông tin: gồm ${threadMem} thành viên\nSố tvm 🧑‍🦰: ${nam} thành viên\nSố tvn 👩‍🦰: ${nu} thành viên\nVới ${qtv} quản trị viên\n🕵️‍♀️ Tổng số tin nhắn: ${sl} tin.`,
+						attachment: fs.createReadStream(__dirname + '/cache/1.png')
+					},
+					event.threadID,
+					() => fs.unlinkSync(__dirname + '/cache/1.png'),
+					event.messageID
+				);
+			return request(encodeURI(`${threadInfo.imageSrc}`))
+				.pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
+				.on('close', () => callback());
+	    }
