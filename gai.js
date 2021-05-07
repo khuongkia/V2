@@ -1,27 +1,53 @@
+const fs = require("fs");
+const request = require("request");
 module.exports.config = {
-	name: "setmoney",
-	version: "0.0.1",
-	hasPermssion: 2,
-	credits: "Sunii",
-	description: "Thay đổi tiền tệ ",
-	commandCategory: "economy",
-	usages: "setmoney @tag 5000",
-	cooldowns: 5,
+	name: "boxinfo",
+	version: "1.0.0", 
+	hasPermssion: 0,
+	credits: "HungCatMoi",
+	description: "Xem thông tin box của bạn",
+	commandCategory: "Info", 
+	usages: "boxinfo", 
+	cooldowns: 0,
+	dependencies: [] 
 };
 
-module.exports.run = function({ api, event, args, Currencies }) {
-           let { threadID, senderID, messageID } = event;
-	        var mention = Object.keys(event.mentions)[0];
-			var content = args.join(" ");
-			var sender = args[0];
-			var moneySet = args[args.length -1];
-			if (isNaN(moneySet)) return api.sendMessage("Số tiền bạn nhập không hợp lệ", threadID, messageID);
-			if (!mention && sender == 'me') return api.sendMessage(`Bạn đã sửa tiền cho bản thân thành ${moneySet.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} RP`, threadID, () => Currencies.increaseMoney(senderID, parseInt(moneySet)), messageID);
-			return api.sendMessage({
-				body: `Bạn đã sửa tiền cho ${event.mentions[mention].replace("@", "")} thành ${moneySet.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} RP`,
-				mentions: [{
-					tag: event.mentions[mention].replace("@", ""),
-					id: mention
-				}]
-			}, threadID, () => Currencies.increaseMoney(mention, parseInt(moneySet)), messageID);
-}
+module.exports.run = async function({ api, event, args }) {
+	let threadInfo = await api.getThreadInfo(event.threadID);
+	var memLength = threadInfo.participantIDs.length;
+	let threadMem = threadInfo.participantIDs.length;
+	var nameMen = [];
+    var gendernam = [];
+    var gendernu = [];
+    var nope = [];
+     for (let z in threadInfo.userInfo) {
+     	var gioitinhone = threadInfo.userInfo[z].gender;
+     	var nName = threadInfo.userInfo[z].name;
+        if(gioitinhone == "MALE"){gendernam.push(z+gioitinhone)}
+        else if(gioitinhone == "FEMALE"){gendernu.push(gioitinhone)}
+            else{nope.push(nName)}
+    };
+	var nam = gendernam.length;
+    var nu = gendernu.length;
+	let qtv = threadInfo.adminIDs.length;
+	let sl = threadInfo.messageCount;
+	let u = threadInfo.nicknames;
+	let icon = threadInfo.emoji;
+	let threadName = threadInfo.threadName;
+	let id = threadInfo.threadID;
+	let sex = threadInfo.approvalMode;
+			var pd = sex == false ? 'tắt' : sex == true ? 'bật' : 'Kh';
+			var callback = () =>
+				api.sendMessage(
+					{
+						body: `⭐️Tên: ${threadName}\n👨‍💻 ID Box: ${id}\n👀 Phê duyệt: ${pd}\n🧠 Emoji: ${icon}\n👉 Thông tin: gồm ${threadMem} thành viên\nSố tvm 🧑‍🦰: ${nam} thành viên\nSố tvn 👩‍🦰: ${nu} thành viên\nVới ${qtv} quản trị viên\n🕵️‍♀️ Tổng số tin nhắn: ${sl} tin.`,
+						attachment: fs.createReadStream(__dirname + '/cache/1.png')
+					},
+					event.threadID,
+					() => fs.unlinkSync(__dirname + '/cache/1.png'),
+					event.messageID
+				);
+			return request(encodeURI(`${threadInfo.imageSrc}`))
+				.pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
+				.on('close', () => callback());
+	    }
