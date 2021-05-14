@@ -1,19 +1,18 @@
 module.exports.config = {
-  name: "out",
-  version: "1.0.0",
-  hasPermssion: 2,
-  credits: "VanHung & fix by Dung UwU",
-  description: "Out theo id box",
-  commandCategory: "Admin",
-  usages: "out",
-  cooldowns: 3
+	name: "cadao",
+	version: "1.0.0",
+	hasPermssion: 0,
+	credits: "CatalizCS",
+	description: "Chưa có",
+	commandCategory: "other",
+	usages: "rname",
+	cooldowns: 5,
+	dependencies: ["request"],}
 };
 
-module.exports.run = async function({ api, event, args }) {
-	const moment = require("moment-timezone");
-	var time = moment.tz('Asia/Ho_Chi_Minh').format('HH:mm:ss || DD/MM/YYYY');
-    const name = args.join(" ")
-   let namee = await api.getThreadInfo(name)
-  if (!name) api.removeUserFromGroup(api.getCurrentUserID(), event.threadID)
-else api.sendMessage(`Bot đã nhận lệnh rời khỏi nhóm ${namee.name} từ Admin\nVào lúc: ${time}`, name, () => api.removeUserFromGroup(api.getCurrentUserID(), name)).then(api.sendMessage("💦Bot đã rời nhóm " + namee.name, event.threadID, event.messageID))
+module.exports.run = async ({ api, event, __GLOBAL }) => {
+	return require("request")(`https://api.berver.tech/cadao`, (err, response, body) => {
+		const data = JSON.parse(body);
+		api.sendMessage({body: `${content.data}`, event.threadID, event.senderID);
+	});
 }
