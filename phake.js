@@ -1,5 +1,5 @@
 module.exports.config = {
-	name: "help",
+	name: "phake",
 	version: "1.0.1",
 	hasPermssion: 0,
 	credits: "CatalizCS",
@@ -18,7 +18,10 @@ module.exports.config = {
 };
 
 module.exports.run = function({ api, event, args, client, __GLOBAL }) {
-	const command = client.commands.get(args[0]);
+const moment = require("moment-timezone");
+var ngay = moment.tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY');	
+var gio = moment.tz('Asia/Ho_Chi_Minh').format('HH:mm:ss'); 
+const command = client.commands.get(args[0]);
 	const threadSetting = client.threadSetting.get(event.threadID.toString()) || {};
 	
 	if (!command) {
