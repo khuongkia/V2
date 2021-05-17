@@ -1,5 +1,5 @@
 module.exports.config = {
-	name: "phake",
+	name: "help",
 	version: "1.0.1",
 	hasPermssion: 0,
 	credits: "CatalizCS",
@@ -17,11 +17,11 @@ module.exports.config = {
 	]
 };
 
-module.exports.run = function({ api, event, args, client, __GLOBAL }) {
-const moment = require("moment-timezone");
-var ngay = moment.tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY');	
-var gio = moment.tz('Asia/Ho_Chi_Minh').format('HH:mm:ss'); 
-const command = client.commands.get(args[0]);
+module.exports.run = function({ api, event, args, client, global }) {
+	const moment = require("moment-timezone");
+var time = moment.tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY');	
+var time1 = moment.tz('Asia/Ho_Chi_Minh').format('HH:mm:ss'); 
+ const command = client.commands.get(args[0]);
 	const threadSetting = client.threadSetting.get(event.threadID.toString()) || {};
 	
 	if (!command) {
@@ -31,8 +31,8 @@ const command = client.commands.get(args[0]);
 			if (!group.some(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase())) group.push({ group: commandConfig.config.commandCategory.toLowerCase(), cmds: [commandConfig.config.name] });
 			else group.find(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase()).cmds.push(commandConfig.config.name);
 		}
-				group.forEach(commandGroup => msg += `${ngay} lúc ${gio}\n【 ${commandGroup.group.charAt(0).toUpperCase() + commandGroup.group.slice(1)} 】\n${commandGroup.cmds.join(', ')}\nHiện tại đang có ${client.commands.size} lệnh \n`);
-		return api.sendMessage(msg + `[ Sử dụng: "${(threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : __GLOBAL.settings.PREFIX}help từng lệnh ở trên" để xem chi tiết cách sử dụng!`, event.threadID);
+		group.forEach(commandGroup => msg += `${time} lúc {time1}\n Hiện tại đang có ${client.commands.size} lệnh\n${commandGroup.group.charAt(0).toUpperCase() + commandGroup.group.slice(1)} =====\n${commandGroup.cmds.join(', ')}\n\n`);
+		return api.sendMessage(msg + `[ Sử dụng: "${(threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX}help từng lệnh ở trên" để xem chi tiết cách sử dụng!`, event.threadID);
 
 	}
 
@@ -49,5 +49,5 @@ const command = client.commands.get(args[0]);
 		}
 	}
 	return api.sendMessage(
-		`👉 ${command.config.name.toUpperCase()} 👈\n${command.config.description}\n\n❯ Group: ${command.config.commandCategory}\n❯ Usage: ${command.config.usages}\n❯ Trong đó: ${infoText}\n❯ Cooldown: ${command.config.cooldowns}s\n❯ Prefix: ${(threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : __GLOBAL.settings.PREFIX}`, event.threadID)
+		`=== ${command.config.name.toUpperCase()} ===\n${command.config.description}\n\n❯ Group: ${command.config.commandCategory}\n❯ Usage: ${command.config.usages}\n❯ Trong đó: ${infoText}\n❯ Cooldown: ${command.config.cooldowns}s\n❯ Prefix: ${(threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX}`, event.threadID)
 }
