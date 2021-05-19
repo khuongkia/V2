@@ -1,4 +1,3 @@
-
 module.exports.config = {
 	name: "fbget",
 	version: "0.0.1",
