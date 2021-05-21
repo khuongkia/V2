@@ -7,7 +7,8 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hoàng 🥀",
   description: "Địt người bạn tag",
-  commandCategory: "general",                                                                                                                                                                                                       usages: "địt [tag người bạn cần địt]",
+  commandCategory: "general",
+  usages: "địt [tag người bạn cần địt]",
   cooldowns: 5,
   dependencies: ["request","fs"]
 };
@@ -23,7 +24,8 @@ module.exports.run = function({
   if (!args.join(" ")) return out("Bạn chưa nhập tin nhắn");
   else
   return request('https://nekos.life/api/v2/img/classic', (err, response, body) => {
-    let picData = JSON.parse(body);                                                                                                                                                                                                   var mention = Object.keys(event.mentions)[0];
+    let picData = JSON.parse(body);
+    var mention = Object.keys(event.mentions)[0];
     let getURL = picData.url;
     let ext = getURL.substring(getURL.lastIndexOf(".") + 1);
     let tag = event.mentions[mention].replace("@", "");
@@ -39,3 +41,4 @@ module.exports.run = function({
     };
     request(getURL).pipe(fs.createWriteStream(__dirname + `/cache/anime.${ext}`)).on("close", callback);
   });
+}
