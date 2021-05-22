@@ -14,7 +14,7 @@ module.exports.event = function({ api, event }) {
 var { threadID, messageID } = event;
 	if (event.body.indexOf("test 1")==0 ||(event.body.indexOf("Test 1")==0)) {
 
-	var msg = {attcahment: __dirname + ""};
+	var msg = {attcahment: __dirname + "đường dẫn file"};
   
 			return api.sendMessage(msg, threadID, messageID);
 		}
@@ -22,3 +22,4 @@ var { threadID, messageID } = event;
 	module.exports.run = function({ api, event, client, __GLOBAL }) {
 
 	}
+//đường dẫn file thì ngâm cứu đê không tự làm sao biết 
